@@ -1,0 +1,150 @@
+<style>
+    /* General Navbar Styles */
+    nav {
+      background-color: #ffffff; /* White background for navbar */
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+      padding: 10px 20px; /* Padding for navbar */
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative; /* To align the toggle button */
+      z-index: 1000; /* Keep it above other content */
+    }
+
+    /* Logo styles */
+    nav .logo {
+      display: flex;
+      align-items: center;
+      font-size: 24px;
+      color: #333; /* Dark text color */
+    }
+
+    nav .logo img {
+      height: 40px; /* Logo height */
+      margin-right: 10px; /* Space between logo and title */
+    }
+
+    /* Nav links styles */
+    nav ul {
+      list-style-type: none; /* Remove bullet points */
+      display: flex; /* Flexbox for horizontal layout */
+      padding: 0; /* Remove padding */
+      margin: 0; /* Remove margin */
+    }
+
+    nav ul li {
+      margin: 0 15px; /* Space between links */
+    }
+
+    nav ul li a {
+      text-decoration: none; /* Remove underline */
+      color: #007bff; /* Link color */
+      font-weight: 500; /* Bold links */
+      transition: color 0.3s ease-in-out; /* Smooth color transition */
+      font-size: 16px; /* Font size for desktop */
+    }
+
+    nav ul li a:hover {
+      color: #0056b3; /* Darker color on hover */
+    }
+
+    /* Toggle button for mobile view */
+    .toggle-button {
+      display: none; /* Hidden by default */
+      font-size: 30px;
+      cursor: pointer;
+      color: #333;
+    }
+
+    /* Hide icons by default (for desktop view) */
+    nav ul li a i {
+      display: none;
+    }
+
+    /* Media query for mobile (max-width: 768px) */
+    @media (max-width: 768px) {
+      /* Make the nav links stack vertically */
+      nav ul {
+        display: none; /* Hide links by default */
+        flex-direction: column;
+        position: absolute;
+        top: 60px; /* Position below the navbar */
+        left: 0;
+        width: 100%; /* Full width for mobile */
+        background-color: #ffffff; /* Same background as navbar */
+        padding: 10px 0;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
+        z-index: 999; /* Ensure it appears above content */
+        transition: all 0.3s ease-in-out; /* Smooth open/close transition */
+      }
+
+      nav ul.active {
+        display: flex; /* Show the menu when active */
+      }
+
+      nav ul li {
+        margin: 10px 0; /* Add space between vertical links */
+      }
+
+      nav ul li a {
+        font-size: 18px; /* Larger font size for mobile */
+        padding: 10px 0; /* Add padding for clickable area */
+        display: flex;
+        align-items: center; /* Align icons with text */
+      }
+
+      /* Show icons only on mobile */
+      nav ul li a i {
+        display: inline-block; /* Display icons */
+        margin-right: 10px; /* Space between icon and text */
+      }
+
+      /* Show the toggle button */
+      .toggle-button {
+        display: block; /* Show the toggle button */
+      }
+
+      nav .logo img {
+        height: 35px; /* Slightly smaller logo for mobile */
+      }
+    }
+
+    body {
+      background-color: #f8f9fa; /* Light background color */
+      font-family: "Arial", sans-serif; /* Font style */
+    }
+
+    /* Optional: Add a smooth transition for menu display */
+    .toggle-button {
+      transition: color 0.3s ease-in-out;
+    }
+
+    .toggle-button:hover {
+      color: #007bff; /* Change toggle button color on hover */
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">
+    <span>Appakau</span>
+  </div>
+  <div class="toggle-button" onclick="toggleMenu()">&#9776;</div> <!-- Hamburger icon -->
+  <ul>
+    <li><a href="{{ url_for('master_data') }}"><i class="fas fa-database"></i> Master Data</a></li>
+    <li><a href="{{ url_for('produksi') }}"><i class="fas fa-industry"></i> Produksi</a></li>
+    <li><a href="{{ url_for('gudang') }}"><i class="fas fa-warehouse"></i> Gudang</a></li>
+    <li><a href="{{ url_for('distribusi') }}"><i class="fas fa-truck"></i> Distribusi</a></li>
+    <li><a href="{{ url_for('penjualan') }}"><i class="fas fa-shopping-cart"></i> Penjualan</a></li>
+    <li><a href="{{ url_for('home') }}"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+  </ul>
+</nav>
+
+<!-- JavaScript to toggle menu visibility -->
+<script>
+  function toggleMenu() {
+    const navLinks = document.querySelector('nav ul');
+    navLinks.classList.toggle('active'); // Toggle the active class
+  }
+</script>

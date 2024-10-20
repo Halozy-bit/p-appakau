@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Appakau</title>
+    <!-- Favicon -->
+    <link
+      rel="shortcut icon"
+      href="{{ url_for('static', filename='images/favicon.ico') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/backend-plugin.min.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/backend.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='vendor/@fortawesome/fontawesome-free/css/all.min.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='vendor/line-awesome/dist/line-awesome/css/line-awesome.min.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='vendor/remixicon/fonts/remixicon.css') }}"
+    />
+  </head>
+  <body>
+    {% include 'header.html' %}
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between">
+              <div class="header-title">
+                <h4 class="card-title">Distribusi Barang</h4>
+              </div>
+            </div>
+            <div class="card-body">
+              <!-- Form Distribusi -->
+              <form action="{{ url_for('distribusi') }}" method="post">
+                <div class="form-group">
+                  <label for="sales_name">Sales:</label>
+                  <select class="form-control" name="sales_name" required>
+                    {% for user in sales_users.iterrows() %}
+                    <option value="{{ user[1]['nama'] }}">
+                      {{ user[1]['nama'] }} - {{ user[1]['area'] }}
+                    </option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="nama_produk">Produk:</label>
+                  <select class="form-control" name="nama_produk" required>
+                    {% for row in warehouse.iterrows() %}
+                    <option
+                      value="{{ row[1]['nama_produk'] }}|{{ row[1]['merk'] }}|{{ row[1]['ukuran'] }}"
+                    >
+                      {{ row[1]['nama_produk'] }} ({{ row[1]['merk'] }}, {{
+                      row[1]['ukuran'] }}) - Stok: {{ row[1]['jumlah'] }}
+                    </option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="jumlah">Jumlah:</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    name="jumlah"
+                    required
+                  />
+                </div>
+                <button type="submit" class="btn btn-primary">
+                  Distribusi
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Tabel Barang yang Sudah Didistribusi -->
+          <div class="card mt-4">
+            <div class="card-header d-flex justify-content-between">
+              <div class="header-title">
+                <h4 class="card-title">Barang yang Sudah Didistribusi</h4>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Sales</th>
+                      <th>Area</th>
+                      <th>Nama Produk</th>
+                      <th>Merk</th>
+                      <th>Ukuran</th>
+                      <th>Jumlah</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for item in distributed_items %}
+                    <tr>
+                      <td>{{ item.sales }}</td>
+                      <td>{{ item.area }}</td>
+                      <td>{{ item.nama_produk }}</td>
+                      <td>{{ item.merk }}</td>
+                      <td>{{ item.ukuran }}</td>
+                      <td>{{ item.jumlah }}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tabel Stok pada Sales -->
+          <div class="card mt-4">
+            <div class="card-header d-flex justify-content-between">
+              <div class="header-title">
+                <h4 class="card-title">Stok pada Sales</h4>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Sales</th>
+                      <th>Area</th>
+                      <th>Nama Produk</th>
+                      <th>Merk</th>
+                      <th>Ukuran</th>
+                      <th>Jumlah</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for stock in sales_stocks.iterrows() %}
+                    <tr>
+                      <td>{{ stock[1]['sales'] }}</td>
+                      <td>{{ stock[1]['area'] }}</td>
+                      <td>{{ stock[1]['nama_produk'] }}</td>
+                      <td>{{ stock[1]['merk'] }}</td>
+                      <td>{{ stock[1]['ukuran'] }}</td>
+                      <td>{{ stock[1]['jumlah'] }}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Backend Bundle JavaScript -->
+    <script src="{{ url_for('static', filename='js/backend-bundle.min.js') }}"></script>
+    <!-- Table Treeview JavaScript -->
+    <script src="{{ url_for('static', filename='js/table-treeview.js') }}"></script>
+    <!-- Chart Custom JavaScript -->
+    <script src="{{ url_for('static', filename='js/customizer.js') }}"></script>
+    <!-- Chart Custom JavaScript -->
+    <script
+      async
+      src="{{ url_for('static', filename='js/chart-custom.js') }}"
+    ></script>
+    <!-- app JavaScript -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  </body>
+</html>

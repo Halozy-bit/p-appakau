@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Appakau</title>
+    <!-- Favicon -->
+    <link
+      rel="shortcut icon"
+      href="{{ url_for('static', filename='images/favicon.ico') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/backend-plugin.min.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/backend.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='vendor/@fortawesome/fontawesome-free/css/all.min.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='vendor/line-awesome/dist/line-awesome/css/line-awesome.min.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='vendor/remixicon/fonts/remixicon.css') }}"
+    />
+    <style>
+      /* Custom CSS for Top Navbar */
+      body {
+        background-color: #f8f9fa; /* Light background color */
+        font-family: "Arial", sans-serif; /* Font style */
+      }
+      nav {
+        background-color: #ffffff; /* White background for navbar */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        padding: 10px 20px; /* Padding for navbar */
+      }
+      nav .logo {
+        display: flex;
+        align-items: center;
+        font-size: 24px;
+        color: #333; /* Dark text color */
+        margin-right: 30px; /* Space between logo and links */
+      }
+      nav .logo img {
+        height: 40px; /* Logo height */
+        margin-right: 10px; /* Space between logo and title */
+      }
+      nav ul {
+        list-style-type: none; /* Remove bullet points */
+        display: flex; /* Flexbox for horizontal layout */
+        padding: 0; /* Remove padding */
+        margin: 0; /* Remove margin */
+      }
+      nav ul li {
+        margin: 0 15px; /* Space between links */
+      }
+      nav ul li a {
+        text-decoration: none; /* Remove underline */
+        color: #007bff; /* Link color */
+        font-weight: 500; /* Bold links */
+        transition: color 0.3s; /* Smooth color transition */
+      }
+      nav ul li a:hover {
+        color: #0056b3; /* Darker color on hover */
+      }
+      .search-bar {
+        margin-left: auto; /* Push search bar to the right */
+        display: flex; /* Flexbox for alignment */
+        align-items: center; /* Center vertically */
+      }
+      .search-input {
+        border: 1px solid #ccc; /* Border for input */
+        border-radius: 5px; /* Rounded corners */
+        padding: 8px 12px; /* Padding for input */
+        width: 200px; /* Width of search input */
+        margin-right: 10px; /* Space between input and button */
+      }
+      .search-button {
+        background-color: #007bff; /* Button color */
+        color: white; /* Button text color */
+        border: none; /* No border */
+        border-radius: 5px; /* Rounded corners */
+        padding: 8px 12px; /* Padding for button */
+        cursor: pointer; /* Pointer cursor */
+        transition: background-color 0.3s; /* Smooth background transition */
+      }
+      .search-button:hover {
+        background-color: #0056b3; /* Darker on hover */
+      }
+      .container {
+        margin: 20px auto; /* Center container */
+        padding: 20px; /* Padding inside the container */
+        background-color: #ffffff; /* White background */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        border-radius: 10px; /* Rounded corners */
+      }
+      h1,
+      h3 {
+        text-align: center; /* Center headings */
+        color: #333; /* Dark text color */
+      }
+      .chart-title {
+        margin-top: 20px; /* Space above chart titles */
+        margin-bottom: 10px; /* Space below chart titles */
+        font-size: 20px; /* Title font size */
+        color: #007bff; /* Primary color */
+      }
+      .table {
+        width: 100%; /* Full width */
+        margin: 10px 0; /* Margin above and below tables */
+        border-collapse: collapse; /* Merge table borders */
+      }
+      .table th,
+      .table td {
+        padding: 12px; /* Padding in cells */
+        text-align: left; /* Left align text */
+        border: 1px solid #dee2e6; /* Border for table cells */
+      }
+      .table-striped tbody tr:nth-child(odd) {
+        background-color: #f9f9f9; /* Zebra striping */
+      }
+      .table thead {
+        background-color: #007bff; /* Header background */
+        color: white; /* Header text color */
+      }
+      .total-revenue {
+        font-size: 24px; /* Larger font for total revenue */
+        font-weight: bold; /* Bold text */
+        color: #28a745; /* Success color */
+      }
+      .chart-container {
+        position: relative;
+        margin: auto;
+        height: 40vh;
+        width: 80vw;
+      }
+    </style>
+  </head>
+  <body>
+    {% include 'header.html' %}
+    <div class="container">
+      <h1>Dashboard Produksi dan Penjualan</h1>
+
+      <div class="row">
+        <div class="col-md-6">
+          <h3 class="chart-title">Sisa Stok di Gudang</h3>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Nama Produk</th>
+                <th>Merk</th>
+                <th>Ukuran</th>
+                <th>Jumlah</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in warehouse_stock %}
+              <tr>
+                <td>{{ item.nama_produk }}</td>
+                <td>{{ item.merk }}</td>
+                <td>{{ item.ukuran }}</td>
+                <td>{{ item.jumlah }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div class="col-md-6">
+          <h3 class="chart-title">Sisa Stok pada Sales</h3>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Sales</th>
+                <th>Area</th>
+                <th>Nama Produk</th>
+                <th>Merk</th>
+                <th>Ukuran</th>
+                <th>Jumlah</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in sales_stock %}
+              <tr>
+                <td>{{ item.sales }}</td>
+                <td>{{ item.area }}</td>
+                <td>{{ item.nama_produk }}</td>
+                <td>{{ item.merk }}</td>
+                <td>{{ item.ukuran }}</td>
+                <td>{{ item.jumlah }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <h3 class="total-revenue">Total Pendapatan: Rp {{ total_revenue }}</h3>
+    </div>
+
+    <div class="chart-container">
+      <div class="card">
+        <div id="chart"></div>
+      </div>
+    </div>
+    <div class="chart-container">
+      <div id="productionChart"></canvas>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <!-- Backend Bundle JavaScript -->
+    <script src="{{ url_for('static', filename='js/backend-bundle.min.js') }}"></script>
+    <!-- Table Treeview JavaScript -->
+    <script src="{{ url_for('static', filename='js/table-treeview.js') }}"></script>
+    <!-- Chart Custom JavaScript -->
+    <script src="{{ url_for('static', filename='js/customizer.js') }}"></script>
+    <!-- Chart Custom JavaScript -->
+    <script
+      async
+      src="{{ url_for('static', filename='js/chart-custom.js') }}"
+    ></script>
+    <!-- app JavaScript -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script>
+      // Data from Flask
+      const salesData = {{ sales_summary | tojson }};
+
+      // Prepare data for the chart
+      const categories = salesData.map(item => item.tanggal);
+      const seriesData = salesData.map(item => item.total_revenue);
+
+      // ApexCharts options
+      const options = {
+          chart: {
+              type: 'line',
+              height: 350
+          },
+          series: [{
+              name: 'Total Revenue',
+              data: seriesData
+          }],
+          xaxis: {
+              categories: categories
+          }
+      };
+
+      // Create the chart
+      const chart = new ApexCharts(document.querySelector("#chart"), options);
+      chart.render();
+    </script>
+  </body>
+</html>

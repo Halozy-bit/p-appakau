@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Appakau</title>
+    <!-- Favicon -->
+    <link
+      rel="shortcut icon"
+      href="{{ url_for('static', filename='images/favicon.ico') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/backend-plugin.min.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/backend.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='vendor/@fortawesome/fontawesome-free/css/all.min.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='vendor/line-awesome/dist/line-awesome/css/line-awesome.min.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='vendor/remixicon/fonts/remixicon.css') }}"
+    />
+  </head>
+  <body>
+    {% include 'header.html' %}
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between">
+              <div class="header-title">
+                <h4 class="card-title">Penjualan</h4>
+              </div>
+            </div>
+            <div class="card-body">
+                <!-- Form untuk input data penjualan -->
+      <form method="POST" action="{{ url_for('penjualan') }}">
+        <div class="form-group">
+          <label for="tanggal">Tanggal</label>
+          <input
+            type="date"
+            id="tanggal"
+            name="tanggal"
+            class="form-control"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="nama_pembeli">Nama Pembeli</label>
+          <input
+            type="text"
+            id="nama_pembeli"
+            name="nama_pembeli"
+            class="form-control"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="telepon_pembeli">Telepon Pembeli</label>
+          <input
+            type="text"
+            id="telepon_pembeli"
+            name="telepon_pembeli"
+            class="form-control"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="sales_name">Sales:</label>
+          <select name="sales_name" class="form-control" required>
+            {% for sales in sales_names %}
+            <option value="{{ sales }}">{{ sales }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="nama_produk">Nama Produk</label>
+          <select
+            id="nama_produk"
+            name="nama_produk"
+            class="form-control"
+            required
+            onchange="updateProductDetails()"
+          >
+            <option value="" selected disabled>Pilih Produk</option>
+            {% for product in available_products %}
+            <option
+              value="{{ product['nama_produk'] }}"
+              data-merk="{{ product['merk'] }}"
+              data-ukuran="{{ product['ukuran'] }}"
+            >
+              {{ product['nama_produk'] }} - {{ product['merk'] }} - {{
+              product['ukuran'] }} (Stok: {{ product['jumlah'] }})
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <input type="hidden" id="merk" name="merk" />
+        <input type="hidden" id="ukuran" name="ukuran" />
+
+        <div class="form-group">
+          <label for="jumlah">Jumlah</label>
+          <input
+            type="number"
+            id="jumlah"
+            name="jumlah"
+            class="form-control"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="harga">Harga</label>
+          <input
+            type="number"
+            id="harga"
+            name="harga"
+            class="form-control"
+            step="0.01"
+            required
+          />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+            </div>
+            <div class="card mt-4">
+              <div class="card-header d-flex justify-content-between">
+                <div class="header-title">
+                  <h4 class="card-title">Data Penjualan</h4>
+                </div>
+              </div>
+      
+
+      
+
+      
+      <!-- Tabel untuk menampilkan data penjualan yang sudah ada -->
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Tanggal</th>
+            <th>Nama Pembeli</th>
+            <th>Telepon Pembeli</th>
+            <th>Nama Produk</th>
+            <th>Merk</th>
+            <th>Ukuran</th>
+            <th>Jumlah</th>
+            <th>Harga</th>
+            <th>Nama Sales</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for sale in sales_data.itertuples() %}
+          <tr>
+            <td>{{ sale.tanggal }}</td>
+            <td>{{ sale.nama_pembeli }}</td>
+            <td>{{ sale.telepon_pembeli }}</td>
+            <td>{{ sale.nama_produk }}</td>
+            <td>{{ sale.merk }}</td>
+            <td>{{ sale.ukuran }}</td>
+            <td>{{ sale.jumlah }}</td>
+            <td>{{ sale.harga }}</td>
+            <td>{{ sale.sales_name }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <a href="{{ url_for('home') }}" class="btn btn-secondary"
+        >Kembali ke Dashboard</a
+      >
+      </div>
+
+      <script>
+        function updateProductDetails() {
+          var select = document.getElementById("nama_produk");
+          var selectedOption = select.options[select.selectedIndex];
+          var merk = selectedOption.getAttribute("data-merk");
+          var ukuran = selectedOption.getAttribute("data-ukuran");
+
+          document.getElementById("merk").value = merk;
+          document.getElementById("ukuran").value = ukuran;
+        }
+        document.getElementById("tanggal").valueAsDate = new Date(); // Set tanggal default ke hari ini
+      </script>
+    </div>
+    <!-- Backend Bundle JavaScript -->
+    <script src="{{ url_for('static', filename='js/backend-bundle.min.js') }}"></script>
+    <!-- Table Treeview JavaScript -->
+    <script src="{{ url_for('static', filename='js/table-treeview.js') }}"></script>
+    <!-- Chart Custom JavaScript -->
+    <script src="{{ url_for('static', filename='js/customizer.js') }}"></script>
+    <!-- Chart Custom JavaScript -->
+    <script
+      async
+      src="{{ url_for('static', filename='js/chart-custom.js') }}"
+    ></script>
+    <!-- app JavaScript -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  </body>
+</html>

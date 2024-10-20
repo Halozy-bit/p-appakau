@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+  </head>
+  <body>
+    <h1>Dashboard</h1>
+    <div>
+      <h2>Summary</h2>
+      <p>Total Produksi: {{ total_productions }}</p>
+      <p>Total Penjualan: {{ total_sales }}</p>
+      <p>Total Stok di Gudang: {{ total_warehouse }}</p>
+      <p>Total Stok Penjualan: {{ total_sales_stocks }}</p>
+    </div>
+
+    <h2>Data Produksi</h2>
+    <table>
+      <tr>
+        <th>Tanggal</th>
+        <th>Nama Produk</th>
+        <th>Merk</th>
+        <th>Ukuran</th>
+        <th>Jumlah</th>
+        <th>Harga</th>
+      </tr>
+      {% for index, row in productions.iterrows() %}
+      <tr>
+        <td>{{ row.tanggal }}</td>
+        <td>{{ row.nama_produk }}</td>
+        <td>{{ row.merk }}</td>
+        <td>{{ row.ukuran }}</td>
+        <td>{{ row.jumlah }}</td>
+        <td>{{ row.harga }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+
+    <h2>Data Penjualan</h2>
+    <table>
+      <tr>
+        <th>Tanggal</th>
+        <th>Nama Pembeli</th>
+        <th>Telepon Pembeli</th>
+        <th>Nama Produk</th>
+        <th>Merk</th>
+        <th>Ukuran</th>
+        <th>Jumlah</th>
+        <th>Harga</th>
+      </tr>
+      {% for index, row in sales_data.iterrows() %}
+      <tr>
+        <td>{{ row.tanggal }}</td>
+        <td>{{ row.nama_pembeli }}</td>
+        <td>{{ row.telepon_pembeli }}</td>
+        <td>{{ row.nama_produk }}</td>
+        <td>{{ row.merk }}</td>
+        <td>{{ row.ukuran }}</td>
+        <td>{{ row.jumlah }}</td>
+        <td>{{ row.harga }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+
+    <h2>Stok Gudang</h2>
+    <table>
+      <tr>
+        <th>Nama Produk</th>
+        <th>Merk</th>
+        <th>Ukuran</th>
+        <th>Jumlah</th>
+      </tr>
+      {% for index, row in warehouse.iterrows() %}
+      <tr>
+        <td>{{ row.nama_produk }}</td>
+        <td>{{ row.merk }}</td>
+        <td>{{ row.ukuran }}</td>
+        <td>{{ row.jumlah }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+
+    <h2>Stok Penjualan</h2>
+    <table>
+      <tr>
+        <th>Sales</th>
+        <th>Area</th>
+        <th>Nama Produk</th>
+        <th>Merk</th>
+        <th>Ukuran</th>
+        <th>Jumlah</th>
+      </tr>
+      {% for index, row in sales_stocks.iterrows() %}
+      <tr>
+        <td>{{ row.sales }}</td>
+        <td>{{ row.area }}</td>
+        <td>{{ row.nama_produk }}</td>
+        <td>{{ row.merk }}</td>
+        <td>{{ row.ukuran }}</td>
+        <td>{{ row.jumlah }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </body>
+</html>
