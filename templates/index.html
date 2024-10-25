@@ -72,37 +72,6 @@
       nav ul li a:hover {
         color: #0056b3; /* Darker color on hover */
       }
-      .search-bar {
-        margin-left: auto; /* Push search bar to the right */
-        display: flex; /* Flexbox for alignment */
-        align-items: center; /* Center vertically */
-      }
-      .search-input {
-        border: 1px solid #ccc; /* Border for input */
-        border-radius: 5px; /* Rounded corners */
-        padding: 8px 12px; /* Padding for input */
-        width: 200px; /* Width of search input */
-        margin-right: 10px; /* Space between input and button */
-      }
-      .search-button {
-        background-color: #007bff; /* Button color */
-        color: white; /* Button text color */
-        border: none; /* No border */
-        border-radius: 5px; /* Rounded corners */
-        padding: 8px 12px; /* Padding for button */
-        cursor: pointer; /* Pointer cursor */
-        transition: background-color 0.3s; /* Smooth background transition */
-      }
-      .search-button:hover {
-        background-color: #0056b3; /* Darker on hover */
-      }
-      .container {
-        margin: 20px auto; /* Center container */
-        padding: 20px; /* Padding inside the container */
-        background-color: #ffffff; /* White background */
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-        border-radius: 10px; /* Rounded corners */
-      }
       h1,
       h3 {
         text-align: center; /* Center headings */
@@ -114,105 +83,104 @@
         font-size: 20px; /* Title font size */
         color: #007bff; /* Primary color */
       }
-      .table {
-        width: 100%; /* Full width */
-        margin: 10px 0; /* Margin above and below tables */
-        border-collapse: collapse; /* Merge table borders */
-      }
-      .table th,
-      .table td {
-        padding: 12px; /* Padding in cells */
-        text-align: left; /* Left align text */
-        border: 1px solid #dee2e6; /* Border for table cells */
-      }
-      .table-striped tbody tr:nth-child(odd) {
-        background-color: #f9f9f9; /* Zebra striping */
-      }
-      .table thead {
-        background-color: #007bff; /* Header background */
-        color: white; /* Header text color */
-      }
       .total-revenue {
         font-size: 24px; /* Larger font for total revenue */
         font-weight: bold; /* Bold text */
         color: #28a745; /* Success color */
       }
-      .chart-container {
-        position: relative;
-        margin: auto;
-        height: 40vh;
-        width: 80vw;
-      }
     </style>
   </head>
   <body>
     {% include 'header.html' %}
-    <div class="container">
-      <h1>Dashboard Produksi dan Penjualan</h1>
-
+    <div class="container-fluid p-4">
       <div class="row">
-        <div class="col-md-6">
-          <h3 class="chart-title">Sisa Stok di Gudang</h3>
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Nama Produk</th>
-                <th>Merk</th>
-                <th>Ukuran</th>
-                <th>Jumlah</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for item in warehouse_stock %}
-              <tr>
-                <td>{{ item.nama_produk }}</td>
-                <td>{{ item.merk }}</td>
-                <td>{{ item.ukuran }}</td>
-                <td>{{ item.jumlah }}</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-        <div class="col-md-6">
-          <h3 class="chart-title">Sisa Stok pada Sales</h3>
-          <table class="table table-striped">
-            <thead>
-              <tr>
-                <th>Sales</th>
-                <th>Area</th>
-                <th>Nama Produk</th>
-                <th>Merk</th>
-                <th>Ukuran</th>
-                <th>Jumlah</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for item in sales_stock %}
-              <tr>
-                <td>{{ item.sales }}</td>
-                <td>{{ item.area }}</td>
-                <td>{{ item.nama_produk }}</td>
-                <td>{{ item.merk }}</td>
-                <td>{{ item.ukuran }}</td>
-                <td>{{ item.jumlah }}</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+        <div class="col-lg-12">
+          <div
+            class="d-flex flex-wrap align-items-center justify-content-between mb-4"
+          >
+            <h3 class="mb-0">Dashboard</h3>
+            <h3 class="total-revenue">
+              Total Pendapatan: Rp {{ total_revenue }}
+            </h3>
+          </div>
         </div>
       </div>
-      <h3 class="total-revenue">Total Pendapatan: Rp {{ total_revenue }}</h3>
+      <div class="row">
+        <div class="col-lg-12">
+          <h5>Produksi harian</h5>
+          <div id="productionChart" style="width: 100%; height: 500px"></div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="card">
+            <h4 class="pt-3 pl-3">Sisa stok gudang</h4>
+            <div class="table-responsive rounded mb-3">
+              <table class="data-table table mb-0 tbl-server-info">
+                <thead class="bg-white text-uppercase">
+                  <tr class="ligth ligth-data">
+                    <th>Nama Produk</th>
+                    <th>Merk</th>
+                    <th>Ukuran</th>
+                    <th>Jumlah</th>
+                  </tr>
+                </thead>
+                <tbody class="light-body">
+                  {% for item in warehouse_stock %}
+                  <tr>
+                    <td>{{ item.nama_produk }}</td>
+                    <td>{{ item.merk }}</td>
+                    <td>{{ item.ukuran }}</td>
+                    <td>{{ item.jumlah }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="card">
+            <h4 class="pt-3 pl-3">Sisa stok sales</h4>
+            <div class="table-responsive rounded mb-3">
+              <table class="data-table table mb-0 tbl-server-info">
+                <thead class="bg-white text-uppercase">
+                  <tr class="ligth ligth-data">
+                    <th>Sales</th>
+                    <th>Area</th>
+                    <th>Nama Produk</th>
+                    <th>Merk</th>
+                    <th>Ukuran</th>
+                    <th>Jumlah</th>
+                  </tr>
+                </thead>
+                <tbody class="light-body">
+                  {% for item in sales_stock %}
+                  <tr>
+                    <td>{{ item.sales }}</td>
+                    <td>{{ item.area }}</td>
+                    <td>{{ item.nama_produk }}</td>
+                    <td>{{ item.merk }}</td>
+                    <td>{{ item.ukuran }}</td>
+                    <td>{{ item.jumlah }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-6">
+          <div id="warehouseChart" style="width: 100%; height: 500px"></div>
+        </div>
+        <div class="col-lg-6">
+          <div id="salesChart" style="width: 100%; height: 500px"></div>
+        </div>
+      </div>
     </div>
 
-    <div class="chart-container">
-      <div class="card">
-        <div id="chart"></div>
-      </div>
-    </div>
-    <div class="chart-container">
-      <div id="productionChart"></canvas>
-    </div>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <!-- Backend Bundle JavaScript -->
     <script src="{{ url_for('static', filename='js/backend-bundle.min.js') }}"></script>
@@ -227,32 +195,261 @@
     ></script>
     <!-- app JavaScript -->
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/percent.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
     <script>
-      // Data from Flask
-      const salesData = {{ sales_summary | tojson }};
 
-      // Prepare data for the chart
-      const categories = salesData.map(item => item.tanggal);
-      const seriesData = salesData.map(item => item.total_revenue);
+      // Create rootWhouse element
+      var rootWhouse = am5.Root.new("warehouseChart");
+      var rootSales = am5.Root.new("salesChart");
+      var rootProduction = am5.Root.new("productionChart")
 
-      // ApexCharts options
-      const options = {
-          chart: {
-              type: 'line',
-              height: 350
-          },
-          series: [{
-              name: 'Total Revenue',
-              data: seriesData
-          }],
-          xaxis: {
-              categories: categories
+      // Set themes
+      rootWhouse.setThemes([am5themes_Animated.new(rootWhouse)]);
+      rootSales.setThemes([am5themes_Animated.new(rootSales)]);
+      rootProduction.setThemes([am5themes_Animated.new(rootProduction)]);
+
+      // Create chart
+      var chartWhouse = rootWhouse.container.children.push(
+        am5percent.PieChart.new(rootWhouse, {
+          layout: rootWhouse.verticalLayout
+        })
+      );
+      var chartSales = rootSales.container.children.push(
+        am5percent.PieChart.new(rootSales, {
+          layout: rootSales.verticalLayout
+          })
+      );
+
+      var chartProduction = rootProduction.container.children.push(
+        am5xy.XYChart.new(rootProduction, {
+          panX: true,
+          panY: true,
+          wheelX: "panX",
+          wheelY: "zoomX",
+          pinchZoomX: true
+        })
+      );
+
+      chartProduction.set("color", am5.ColorSet.new(
+        rootProduction, {
+          step: 2,
+          colors: [
+            am5.color("#CCF0CF"),
+            am5.color("#FAF2E8"),
+            am5.color("#FDDFC3"),
+            am5.color("#E4BEE5"),
+            am5.color("#A39CB8"),
+            am5.color("#DCB9E2"),
+            am5.color("#F2D0DE"),
+            am5.color("#F7F1D7"),
+            am5.color("#F2D5B6"),
+            am5.color("#BFC5E9"),
+          ]
+        }
+      ))
+
+      var cursor = chartProduction.set("cursor", am5xy.XYCursor.new(
+        rootProduction, {
+          behavior: "none"
+        }
+      ));
+
+      // Mengonversi string JSON menjadi objek JavaScript
+      const productions = {{ productions.to_json(orient='records') | safe }};
+        // Menyiapkan data yang diformat
+        const dataProduction = [];
+
+        productions.forEach(item => {
+            const tanggal = (item.tanggal).toString(); // Mengambil tahun dari tanggal
+
+            // Mencari atau membuat entri untuk tahun yang sama
+            let entry = dataProduction.find(d => d.tanggal === tanggal);
+            if (!entry) {
+                entry = { tanggal: tanggal };
+                dataProduction.push(entry);
+            }
+
+            // Menambahkan jumlah produk ke entri
+            entry[item.nama_produk] = (entry[item.nama_produk] || 0) + item.jumlah;
+        });
+
+        console.log(dataProduction);
+
+      cursor.lineY.set("visible", false);
+
+      var xAxis = chartProduction.xAxes.push(
+        am5xy.CategoryAxis.new(rootProduction, {
+          categoryField: "tanggal",
+          startLocation: 0.5,
+          endLocation: 0.5,
+          renderer: am5xy.AxisRendererX.new(rootProduction, {
+            minorGridEnabled: true,
+            minGridDistance: 70
+        }),
+        tooltip: am5.Tooltip.new(rootProduction, {})
+      }));
+
+      xAxis.data.setAll(dataProduction)
+
+      var yAxis = chartProduction.yAxes.push(
+        am5xy.ValueAxis.new(rootProduction, {
+          renderer: am5xy.AxisRendererY.new(rootProduction, {
+            minGridDistance: 30
+          })
+        })
+      );
+
+      // Create series
+      var seriesWhouse = chartWhouse.series.push(
+        am5percent.PieSeries.new(rootWhouse, {
+          valueField: "jumlah",
+          categoryField: "nama_produk",
+        })
+      );
+
+      var seriesSales = chartSales.series.push(
+        am5percent.PieSeries.new(rootSales, {
+          valueField: "jumlah",
+          categoryField: "area",
+          })
+      )
+
+      function seriesProduction(nama_produk, field ){
+        var seriesProduction = chartProduction.series.push(am5xy.SmoothedXLineSeries.new(rootProduction, {
+          name: nama_produk,
+          xAxis: xAxis,
+          yAxis: yAxis,
+          valueYField: field,
+          categoryXField: "tanggal",
+          stacked: true,
+          stroke: am5.color(0xffffff),
+          tooltip: am5.Tooltip.new(rootProduction, {
+            pointerOrientation: "horizontal",
+            labelText: "[bold]{name}[/]\n{categoryX}: {valueY}"
+          })
+        }));
+
+
+
+        seriesProduction.strokes.template.setAll({
+          strokeWidth: 4,
+          strokeOpacity: 1,
+          shadowBlur: 2,
+          shadowOffsetX: 2,
+          shadowOffsetY: 2,
+          shadowColor: am5.color(0x000000),
+          shadowOpacity: 0.1
+        })
+
+        seriesProduction.fills.template.setAll({
+          fillOpacity: 1,
+          visible: true,
+
+          fillPattern: am5.GrainPattern.new(rootProduction, {
+            maxOpacity: 0.15,
+            density: 0.5,
+            colors: [am5.color(0x000000), am5.color(0x000000), am5.color(0xffffff)]
+          })
+        });
+
+        seriesProduction.data.setAll(dataProduction);
+        seriesProduction.appear(1000);
+      }
+
+      const produkNames = Object.keys(dataProduction[0]).filter(key => key !== 'tanggal');
+      produkNames.forEach(nama_produk => {
+          seriesProduction(nama_produk, nama_produk);
+      });
+
+      chartProduction.set("scrollbarX", am5.Scrollbar.new(rootProduction,{
+        orientation: "horizontal"
+      }));
+
+      // Add legend
+      var legend = chartWhouse.children.push(
+        am5.Legend.new(rootWhouse, {
+          centerX: am5.percent(50),
+          x: am5.percent(50),
+          layout: am5.GridLayout.new(rootWhouse, {
+             maxColumns: 10,
+             fixedWidthGrid: true
+          })
+        })
+      );
+      var legendSales = chartSales.children.push(
+        am5.Legend.new(rootSales, {
+          centerX: am5.percent(50),
+          x: am5.percent(50),
+          layout: am5.GridLayout.new(rootSales, {
+            maxColumns: 10,
+            fixedWidthGrid: true
+          })
+        })
+      );
+
+      // Mengambil data dari warehouse_stock dan memformatnya untuk pie chart
+      let dataWhouse = [];
+      {% for item in warehouse_stock %}
+        {% if item.jumlah > 0 %}  // Pengecekan jumlah
+          dataWhouse.push({
+            nama_produk: "{{ item.nama_produk }} - {{ item.merk }} - {{ item.ukuran }}",
+            jumlah: {% if item.ukuran|lower == 'slop' %}
+                    {{ item.jumlah / 10 }}
+                    {% else %}
+                    {{ item.jumlah }}
+                    {% endif %}
+          });
+        {% endif %}
+      {% endfor %}
+
+      let dataSales = [];
+      {% for item in sales_stock %}
+        {% if item.jumlah > 0 %}  // Pengecekan jumlah
+        dataSales.push({
+          area: "{{ item.area }}",
+          jumlah: {{item.jumlah}}
+        });
+        {% endif %}
+      {% endfor %}
+
+      // Mengelompokkan dan menjumlahkan berdasarkan area
+      const result = dataSales.reduce((acc, current) => {
+          // Cek apakah area sudah ada di accumulator
+          if (!acc[current.area]) {
+              acc[current.area] = {
+                  area: current.area,
+                  jumlah: 0
+              };
           }
-      };
+          // Jumlahkan produk
+          acc[current.area].jumlah += current.jumlah;
+          return acc;
+      },
 
-      // Create the chart
-      const chart = new ApexCharts(document.querySelector("#chart"), options);
-      chart.render();
+      {});
+
+      // Mengubah objek menjadi array
+      const finalResult = Object.values(result);
+
+      // Set data
+      seriesWhouse.data.setAll(dataWhouse);
+      seriesWhouse.labels.template.set("forceHidden", true);
+      seriesWhouse.ticks.template.set("forceHidden", true);
+      legend.data.setAll(seriesWhouse.dataItems);
+
+      seriesSales.data.setAll(finalResult);
+      seriesSales.labels.template.set("forceHidden", true);
+      seriesSales.ticks.template.set("forceHidden", true);
+      legendSales.data.setAll(seriesSales.dataItems);
+
+
+      // Play initial series animation
+      seriesWhouse.appear(1000, 100);
+      seriesSales.appear(1000, 100);
+      chartProduction.appear(1000, 100)
     </script>
   </body>
 </html>

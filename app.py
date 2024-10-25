@@ -21,9 +21,9 @@ users = pd.DataFrame({
 })
 
 products = pd.DataFrame({
-    'nama_produk': ['Produk A', 'Produk B', 'Produk C'],
-    'merk': ['Merk X', 'Merk Y', 'Merk Z'],
-    'ukuran': ['pcs', 'dus', 'slop']
+    'nama_produk': ['Produk A', 'Produk B', 'Produk C','Produk D','Produk E','Produk F','Produk G','Produk H','Produk I','Produk J', 'Produk A', 'Produk B', 'Produk C','Produk D','Produk E','Produk F','Produk G','Produk H','Produk I','Produk J',  ],
+    'merk': ['Merk 1', 'Merk 2', 'Merk 3', "Merk 4", "Merk 5", "Merk 6", "Merk 7", "Merk 8", "Merk 9", "Merk 10",'Merk 1', 'Merk 2', 'Merk 3', "Merk 4", "Merk 5", "Merk 6", "Merk 7", "Merk 8", "Merk 9", "Merk 10", ],
+    'ukuran': ['slop', 'slop', 'slop', 'slop', 'slop', 'slop', 'slop', 'slop', 'slop', 'slop', 'Dus', 'Dus','Dus','Dus','Dus','Dus','Dus','Dus','Dus','Dus', ]
 })
 distributed_items = []
 
@@ -231,12 +231,12 @@ def home():
         warehouse_stock = []
     else:
         # Prepare stock information
-        warehouse_stock = warehouse.groupby(['nama_produk']).sum().reset_index()
+        warehouse_stock = warehouse.groupby(['merk', 'ukuran']).sum().reset_index()
 
     if sales_stocks.empty:
         sales_stock = []
     else:
-        sales_stock = sales_stocks.groupby(['nama_produk']).sum().reset_index()
+        sales_stock = sales_stocks.groupby(['merk',  'ukuran', 'area']).sum().reset_index()
     
     # Prepare data for the chart
     sales_summary = sales_data.groupby('tanggal').agg({'jumlah': 'sum', 'harga': 'sum'}).reset_index()
@@ -245,7 +245,7 @@ def home():
     # Convert to JSON for use in JavaScript
     sales_summary_json = sales_summary.to_dict(orient='records')
 
-    return render_template('index.html', sales_summary=sales_summary_json,
+    return render_template('index.html',productions=productions, sales_summary=sales_summary_json,
                            total_revenue=total_revenue,
                            warehouse_stock=warehouse_stock.to_dict(orient='records') if not warehouse.empty else [],
                            sales_stock=sales_stock.to_dict(orient='records') if not sales_stocks.empty else [])
