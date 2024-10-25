@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import os
 import io
 import base64
+import uuid
 from datetime import datetime, timedelta
 import numpy as np
 import seaborn as sns
@@ -26,6 +27,7 @@ products = pd.DataFrame({
     'ukuran': ['slop', 'slop', 'slop', 'slop', 'slop', 'slop', 'slop', 'slop', 'slop', 'slop', 'Dus', 'Dus','Dus','Dus','Dus','Dus','Dus','Dus','Dus','Dus', ]
 })
 distributed_items = []
+invoices = []
 
 # Simulasi data produksi
 productions = pd.DataFrame(columns=['tanggal', 'nama_produk', 'merk', 'ukuran', 'jumlah', 'harga'])
@@ -38,6 +40,37 @@ sales_stocks = pd.DataFrame(columns=['sales', 'area', 'nama_produk', 'merk', 'uk
 
 # Simulasi penjualan
 sales_data = pd.DataFrame(columns=['tanggal', 'nama_pembeli', 'telepon_pembeli', 'nama_produk', 'merk', 'ukuran', 'jumlah', 'harga', 'sales', 'area'])
+
+# Kelas-kelas kustom untuk invoice
+class Client:
+    def __init__(self, name, address):
+        self.name = name
+        self.address = address
+
+class Item:
+    def __init__(self, name, quantity, unit_price):
+        self.name = name
+        self.quantity = quantity
+        self.unit_price = unit_price
+        self.total = quantity * unit_price
+
+class Tax:
+    def __init__(self, name, rate):
+        self.name = name
+        self.rate = rate
+
+class Invoice:
+    def __init__(self, client, items, taxes, currency="IDR"):
+        self.id = str(uuid.uuid4())
+        self.client = client
+        self.items = items
+        self.taxes = taxes
+        self.currency = currency
+        self.subtotal = sum(item.total for item in items)
+        self.tax_amount = sum(tax.rate * self.subtotal for tax in taxes)
+        self.total = self.subtotal + self.tax_amount
+        self.paid_amount = 0
+        self.payment_status = "Belum Bayar"
 
 # Master Data
 @app.route('/master_data')
@@ -75,6 +108,7 @@ def produksi():
             (warehouse['nama_produk'] == nama_produk) & 
             (warehouse['merk'] == merk) & 
             (warehouse['ukuran'] == ukuran)
+
         ]
 
         if not existing_stock.empty:
@@ -88,7 +122,8 @@ def produksi():
                 'nama_produk': nama_produk,
                 'merk': merk,
                 'ukuran': ukuran,
-                'jumlah': jumlah
+                'jumlah': jumlah,
+                'harga': harga
             }
             warehouse = warehouse._append(new_warehouse_entry, ignore_index=True)
 
@@ -113,6 +148,7 @@ def distribusi():
         merk = produk_info[1]
         ukuran = produk_info[2]
         jumlah = int(request.form['jumlah'])
+        harga = int(request.form['harga'])
 
         warehouse_index = warehouse[
             (warehouse['nama_produk'] == nama_produk) & 
@@ -153,10 +189,13 @@ def distribusi():
                     'nama_produk': nama_produk,
                     'merk': merk,
                     'ukuran': ukuran,
-                    'jumlah': jumlah
+                    'jumlah': jumlah,
+                    'harga': harga
                 })
 
-                return redirect(url_for('distribusi'))
+                invoice = create_invoice(distributed_items[-1])
+
+                return redirect(url_for('invoice', invoice_id=invoice.id))
             else:
                 return "Stok di gudang tidak mencukupi.", 400
         else:
@@ -165,6 +204,65 @@ def distribusi():
     sales_users = users[users['jabatan'] == 'sales']
     
     return render_template('distribusi.html', sales_users=sales_users, warehouse=warehouse, distributed_items=distributed_items, sales_stocks=sales_stocks)
+
+def create_invoice(item):
+    client = Client(
+        name = item['sales'],
+        address=item['area']
+    )
+
+    invoice_item = Item(
+        name=f"{item['nama_produk']} {item['merk']} {item['ukuran']}",
+        quantity=item['jumlah'],
+        unit_price=item['harga']
+    )
+
+    tax = Tax(
+        name="PPN",
+        rate=0.11
+    )
+
+    invoice = Invoice(
+        client=client,
+        items=[invoice_item],
+        taxes=[tax],
+        currency="IDR"
+    )
+
+    invoice = Invoice(client=client, items=[invoice_item], taxes=[tax], currency="IDR")
+    invoices.append(invoice)
+    return invoice
+
+
+@app.route('/invoice/<invoice_id>', methods=['GET', 'POST'])
+def invoice(invoice_id):
+    invoice = next((inv for inv in invoices if inv.id == invoice_id), None)
+    if not invoice:
+        return "Invoice tidak ditemukan", 404
+
+    if request.method == 'POST':
+        payment_type = request.form['payment_type']
+        if payment_type == 'full':
+            invoice.paid_amount = invoice.total
+        elif payment_type == 'partial':
+            invoice.paid_amount = float(request.form['paid_amount'])
+        elif payment_type == 'later':
+            invoice.paid_amount = 0
+
+        invoice.payment_status = 'Lunas' if invoice.paid_amount >= invoice.total else 'Sebagian' if invoice.paid_amount > 0 else 'Belum Bayar'
+
+        return redirect(url_for('invoice', invoice_id=invoice_id))
+
+    return render_template('invoice.html', invoice=invoice) 
+
+@app.route('/invoice_list')
+def invoice_list():
+    return render_template('invoice_list.html', invoices=invoices)
+
+@app.template_filter('format_currency')
+def format_currency(value):
+    return "{:,.2f}".format(value)
+
 
 # Penjualan
 @app.route('/penjualan', methods=['GET', 'POST'])

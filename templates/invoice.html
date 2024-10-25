@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Invoice</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <div class="container mt-5">
+      {% include 'header.html' %}
+      <h1>Invoice</h1>
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Invoice #{{ invoice.id }}</h5>
+          <p><strong>Pembeli:</strong> {{ invoice.client.name }}</p>
+          <p><strong>Area:</strong> {{ invoice.client.address }}</p>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Produk</th>
+                <th>Jumlah</th>
+                <th>Harga Satuan</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in invoice.items %}
+              <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>Rp {{ item.unit_price|format_currency }}</td>
+                <td>
+                  Rp {{ (item.quantity * item.unit_price)|format_currency }}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <p>
+            <strong>Subtotal:</strong> Rp {{ invoice.subtotal|format_currency }}
+          </p>
+          <p>
+            <strong>PPN (11%):</strong> Rp {{ invoice.tax_amount|format_currency
+            }}
+          </p>
+          <p><strong>Total:</strong> Rp {{ invoice.total|format_currency }}</p>
+          <p>
+            <strong>Status Pembayaran:</strong> {{ invoice.payment_status }}
+          </p>
+          {% if invoice.payment_status != 'Lunas' %}
+          <form method="POST">
+            <div class="form-group">
+              <label for="payment_type">Jenis Pembayaran:</label>
+              <select
+                class="form-control"
+                id="payment_type"
+                name="payment_type"
+              >
+                <option value="full">Bayar Penuh</option>
+                <option value="partial">Bayar Sebagian</option>
+                <option value="later">Bayar Nanti</option>
+              </select>
+            </div>
+            <div class="form-group" id="partial_payment" style="display: none">
+              <label for="paid_amount">Jumlah Pembayaran:</label>
+              <input
+                type="number"
+                class="form-control"
+                id="paid_amount"
+                name="paid_amount"
+                step="0.01"
+              />
+            </div>
+            <button type="submit" class="btn btn-primary">
+              Proses Pembayaran
+            </button>
+          </form>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $("#payment_type").change(function () {
+          if ($(this).val() === "partial") {
+            $("#partial_payment").show();
+          } else {
+            $("#partial_payment").hide();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

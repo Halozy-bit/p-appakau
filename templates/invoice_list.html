@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daftar Invoice</title>
+    <style>
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+    </style>
+  </head>
+  <body>
+    {% include 'header.html' %}
+    <h1>Daftar Invoice</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>ID Invoice</th>
+          <th>Nama Klien</th>
+          <th>Total</th>
+          <th>Status Pembayaran</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for invoice in invoices %}
+        <tr>
+          <td>{{ invoice.id }}</td>
+          <td>{{ invoice.client.name }}</td>
+          <td>{{ invoice.total|format_currency }}</td>
+          <td>{{ invoice.payment_status }}</td>
+          <td>
+            <a href="{{ url_for('invoice', invoice_id=invoice.id) }}"
+              >Lihat Detail</a
+            >
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>
